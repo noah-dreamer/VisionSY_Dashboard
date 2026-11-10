@@ -65,6 +65,9 @@ PLAYWRIGHT_MODULE=/path/to/playwright-core/index.mjs node test/layout.browser.mj
 
 ## Cloudflare Pages（GitHub 自动部署）
 
+面板地址：[https://visionsy-dashboard.pages.dev](https://visionsy-dashboard.pages.dev)。
+Pages 项目已连接本仓库，推送到 `main` 会自动触发生产构建。
+
 GitHub 仓库：`noah-dreamer/VisionSY_Dashboard`。使用 Pages 的 Git 集成连接此仓库，不使用 Direct Upload。
 
 | 配置 | 值 |
