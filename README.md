@@ -88,5 +88,5 @@ PLAYWRIGHT_MODULE=/path/to/playwright-core/index.mjs node test/layout.browser.mj
 ```
 
 Node 测试覆盖本地加密存储、跨设备云端同步、密码轮换、旧会话失效、过期配置拒绝、来源/认证校验和静态服务器。
-浏览器联调使用相邻 `VisionSY_Private/deploy/docker/.split-local/credentials.json`，或通过
+浏览器联调使用相邻 `VisionSY_Daemon/deploy/docker/.split-local/credentials.json`，或通过
 `VISIONSY_LAYOUT_CREDENTIALS` 指定绝对路径，不输出凭据。云端账号流程不使用该本地测试凭据。
