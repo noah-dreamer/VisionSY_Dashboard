@@ -57,7 +57,7 @@ export class CloudClient extends BrowserClient {
  }
 }
 export async function createClient(){
- const response=await fetch('/api/session',{credentials:'same-origin',cache:'no-store',headers:{Accept:'application/json'}});
+ const response=await fetch('/api/session',{credentials:'same-origin',cache:'no-store',signal:AbortSignal.timeout(12000),headers:{Accept:'application/json'}});
  if(response.status===404)return new BrowserClient();
  if(!response.ok)throw new Error('云端控制台尚未配置完成或暂时不可用，请稍后刷新。');
  const info=await response.json();if(info.mode!=='cloud')throw new Error('控制台接口版本不兼容。');

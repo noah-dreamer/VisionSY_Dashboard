@@ -254,7 +254,20 @@ async function route(rebuild=false,poll=false){
 }
 async function loadConnections(){const data=await api('/api/connections');state.connections=data.data;state.active=data.active_id;}
 async function start(){await loadConnections();await route(true);}
-async function initialize(){try{client ||= await createClient();state.session=await api('/api/session');if(state.session.authenticated)await start();else showAuth(state.session.setup_required);}catch(error){$('#app').textContent=error.message;}}
+async function initialize(){
+  try{
+    if(!client){client=await createClient();state.session=client.session();}
+    else state.session=await api('/api/session');
+    if(state.session.authenticated)await start();else showAuth(state.session.setup_required);
+  }catch(error){
+    const status=$('#startup-status'),button=$('#startup-button');
+    if(status && button){
+      status.textContent=error.name==='TimeoutError'?'连接超时，请检查网络后重试。':error.message;
+      button.disabled=false;button.textContent='重新连接';
+      button.onclick=()=>{button.disabled=true;button.textContent='正在连接…';status.textContent='正在读取登录状态…';initialize();};
+    }else{showAuth(false);$('#auth-error').textContent=error.message;$('#auth-error').className='inline-message error';}
+  }
+}
 document.addEventListener('click',async event=>{
   const button=event.target.closest('[data-action]');if(!button)return;
   const action=button.dataset.action,id=button.dataset.id;button.disabled=true;

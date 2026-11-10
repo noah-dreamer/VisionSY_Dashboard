@@ -5,11 +5,32 @@
   <meta name="description" content="VisionSY 独立媒体管理控制台。连接 daemon，管理用户、图库、任务和数据库备份。">
   <title>VisionSY Dashboard · 媒体管理控制台</title>
   <link rel="icon" href="/favicon.ico"><link rel="stylesheet" href="/style.css">
+  <link rel="modulepreload" href="/client.js">
+  <link rel="modulepreload" href="/cloud-client.js">
+  <link rel="modulepreload" href="/crypto.js">
   <script type="module" src="/app.js"></script>
 </head>
 <body>
   <a class="skip" href="#main">跳转到主要内容</a>
-  <div id="app"><div class="initial">正在打开 VisionSY Dashboard…</div></div>
+  <div id="app">
+    <div class="auth-layout" id="startup-shell" aria-busy="true">
+      <section class="auth-art">
+        <div class="brand"><img src="/logo.png" alt=""><div><strong>VisionSY<span class="brand-period">.</span></strong><small>MEDIA CONTROL CENTER</small></div></div>
+        <div class="art-orbit" aria-hidden="true"></div>
+        <div class="art-title"><div class="eyebrow">ONE PLACE. ALL YOUR MEDIA.</div><h1>让每一份影像，<br>都有序可寻。</h1><p>连接你的媒体服务，在一个清晰的工作空间里，管理用户、图库与后台任务。</p></div>
+        <div class="art-foot">VISIONSY DASHBOARD &nbsp; / &nbsp; INDEPENDENT BY DESIGN</div>
+      </section>
+      <section class="auth-form-wrap">
+        <div class="auth-form">
+          <div class="eyebrow">WELCOME TO YOUR WORKSPACE</div><h1>管理控制台</h1>
+          <p id="startup-status" role="status">正在读取登录状态…</p>
+          <div class="auth-fields"><label class="field">用户名<input disabled placeholder="你的管理员用户名"></label><label class="field">密码<input type="password" disabled placeholder="至少 10 个字符"></label></div>
+          <button class="button primary" disabled id="startup-button">正在连接…</button>
+          <noscript><p>请启用 JavaScript 后使用管理控制台。</p></noscript>
+        </div>
+      </section>
+    </div>
+  </div>
   <div id="toast" role="status" aria-live="polite"></div>
   <dialog id="dialog" aria-labelledby="dialog-title"></dialog>
 </body>
