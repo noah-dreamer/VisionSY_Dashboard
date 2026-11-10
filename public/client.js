@@ -47,14 +47,14 @@ export class BrowserClient {
     // Another tab may have changed the vault while password derivation was running.
     if (this.storage.getItem(VAULT) !== raw) { key.fill(0); throw new Error('连接配置已在其他标签页更新，请重试。'); }
     this.key = key; this.salt = salt; this.state = value; this.version = raw;
-    if (setup) this.save();
+    if (setup) await this.save();
     return this.session();
   }
   assertUnlocked() {
     if (!this.state) throw new Error('请先解锁当前浏览器的管理控制台。');
     if (this.storage.getItem(VAULT) !== this.version) { this.lock(); throw new Error('连接配置已在其他标签页更新，请重新登录。'); }
   }
-  save() {
+  async save() {
     this.assertUnlocked();
     const iv = random(12), encrypted = gcm(this.key, iv).encrypt(encoder.encode(JSON.stringify(this.state)));
     const serialized = JSON.stringify({ v: 1, salt: hex(this.salt), iv: hex(iv), data: hex(encrypted) });
@@ -100,7 +100,7 @@ export class BrowserClient {
       if (!matches) throw new Error('当前密码不正确。');
       if (typeof data.password !== 'string' || data.password.length < 10 || data.password.length > 256) throw new Error('新密码需要 10–256 个字符。');
       const salt = random(16), key = await this.derive(data.password, salt);
-      this.assertUnlocked(); this.key.fill(0); this.key = key; this.salt = salt; this.save();
+      this.assertUnlocked(); this.key.fill(0); this.key = key; this.salt = salt; await this.save();
       return { message: '当前浏览器的连接解锁密码已更新。' };
     }
     if (path === '/api/connections/test') return this.probe(this.candidate(data));
@@ -109,7 +109,7 @@ export class BrowserClient {
       const connection = this.candidate(data), id = data.id || hex(random(16)).replace(/^(.{8})(.{4})(.{4})(.{4})(.{12})$/, '$1-$2-$3-$4-$5');
       const index = this.state.connections.findIndex(c => c.id === id), record = { ...connection, id };
       if (index < 0) this.state.connections.push(record); else this.state.connections[index] = record;
-      this.state.activeId = id; this.save(); return this.connections();
+      this.state.activeId = id; await this.save(); return this.connections();
     }
     const match = /^\/api\/connections\/([a-f0-9-]{36})(?:\/(activate|test))?$/.exec(path);
     if (match) {
@@ -118,7 +118,7 @@ export class BrowserClient {
       if (match[2] === 'activate') this.state.activeId = connection.id;
       else if (method === 'DELETE') { this.state.connections = this.state.connections.filter(c => c.id !== connection.id); if (this.state.activeId === connection.id) this.state.activeId = this.state.connections[0]?.id || null; }
       else throw new Error('操作不存在。');
-      this.save(); return { ok: true };
+      await this.save(); return { ok: true };
     }
     throw new Error('操作不存在。');
   }

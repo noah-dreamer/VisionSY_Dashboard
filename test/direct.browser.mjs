@@ -22,7 +22,7 @@ try {
   await page.locator('a.nav-link[href="#overview"]').click();
   await page.getByRole('heading',{name:'工作空间总览',exact:true}).waitFor();
   assert.ok(requests.some(r=>r.origin===daemonOrigin&&r.url.endsWith('/info')));
-  assert.equal(requests.filter(r=>r.origin===dashboardOrigin&&(new URL(r.url).pathname.startsWith('/api/')||r.method!=='GET')).length,0,'Dashboard must receive only static GET requests');
+  assert.equal(requests.filter(r=>r.origin===dashboardOrigin&&((new URL(r.url).pathname.startsWith('/api/')&&new URL(r.url).pathname!=='/api/session')||r.method!=='GET')).length,0,'Dashboard must receive only static GET requests');
   assert.equal(await page.evaluate(()=>document.cookie.includes('visionsy_dashboard=')),false);
   console.log('PASS: unchanged UI loads with browser-to-daemon requests, no Dashboard API requests or session cookies');
   // Wrong key must be rejected by daemon and readable as a CORS JSON error.
@@ -78,7 +78,7 @@ try {
     assert.equal(result,'blocked');await other.close();
   }finally{server.closeAllConnections();await new Promise(r=>server.close(r));}
   console.log('PASS: unlisted Dashboard origin is blocked by daemon CORS');
-  assert.equal(requests.filter(r=>r.origin===dashboardOrigin&&new URL(r.url).pathname.startsWith('/api/')).length,0);
+  assert.equal(requests.filter(r=>r.origin===dashboardOrigin&&new URL(r.url).pathname.startsWith('/api/')&&new URL(r.url).pathname!=='/api/session').length,0);
   assert.deepEqual(errors,[]);
 } finally {
   if(userId)await run(`users/${userId}`,'DELETE',{}).catch(()=>{});

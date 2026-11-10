@@ -4,7 +4,7 @@ import { readFile } from 'node:fs/promises';
 import { dirname, join } from 'node:path';
 import { fileURLToPath, pathToFileURL } from 'node:url';
 const root = join(dirname(fileURLToPath(import.meta.url)), 'public');
-const files = { '/': ['index.html','text/html; charset=utf-8'], '/index.html':['index.html','text/html; charset=utf-8'], '/app.js':['app.js','text/javascript; charset=utf-8'], '/client.js':['client.js','text/javascript; charset=utf-8'], '/crypto.js':['crypto.js','text/javascript; charset=utf-8'], '/style.css':['style.css','text/css; charset=utf-8'], '/logo.png':['logo.png','image/png'], '/favicon.ico':['favicon.ico','image/x-icon'] };
+const files = { '/': ['index.html','text/html; charset=utf-8'], '/index.html':['index.html','text/html; charset=utf-8'], '/app.js':['app.js','text/javascript; charset=utf-8'], '/client.js':['client.js','text/javascript; charset=utf-8'], '/cloud-client.js':['cloud-client.js','text/javascript; charset=utf-8'], '/crypto.js':['crypto.js','text/javascript; charset=utf-8'], '/style.css':['style.css','text/css; charset=utf-8'], '/logo.png':['logo.png','image/png'], '/favicon.ico':['favicon.ico','image/x-icon'] };
 export function createDashboard() {
   const server = createServer(async (req, res) => {
     res.setHeader('X-Content-Type-Options','nosniff');res.setHeader('Referrer-Policy','no-referrer');res.setHeader('X-Frame-Options','DENY');res.setHeader('Cache-Control','no-store');
