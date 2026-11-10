@@ -1,0 +1,8 @@
+name: visionsy-dashboard
+services:
+  dashboard:
+    build: .
+    image: visionsy-dashboard:local
+    ports:
+      - "${DASHBOARD_BIND_IP:-0.0.0.0}:${DASHBOARD_PORT:-8090}:8090"
+    restart: unless-stopped

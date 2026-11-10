@@ -6,7 +6,7 @@ Dashboard 服务器只发送 HTML、JS、CSS、图片，不保存账号、密钥
 ## 启动
 
 ```bash
-cd dashboard
+cd VisionSY_Dashboard
 npm ci
 npm run build
 npm start
@@ -17,7 +17,7 @@ npm start
 Docker 构建会自动打包浏览器依赖：
 
 ```bash
-docker compose -f deploy/docker/compose.dashboard.yaml up -d --build --wait
+docker compose up -d --build --wait
 ```
 
 ## 连接和本地账号
@@ -59,5 +59,34 @@ PLAYWRIGHT_MODULE=/path/to/playwright-core/index.mjs node test/direct.browser.mj
 PLAYWRIGHT_MODULE=/path/to/playwright-core/index.mjs node test/layout.browser.mjs
 ```
 
-浏览器测试使用 `deploy/docker/.split-local/credentials.json` 中的本机测试凭据；不输出凭据。
+浏览器测试使用 相邻主项目的 `VisionSY_Private/deploy/docker/.split-local/credentials.json`，也可通过 `VISIONSY_LAYOUT_CREDENTIALS` 指定绝对路径 中的本机测试凭据；不输出凭据。
 覆盖浏览器直连、错误密钥、CORS、实际 CRUD、备份下载、刷新解锁和原有页面布局。
+
+
+## Cloudflare Pages（GitHub 自动部署）
+
+GitHub 仓库：`noah-dreamer/VisionSY_Dashboard`。使用 Pages 的 Git 集成连接此仓库，不使用 Direct Upload。
+
+| 配置 | 值 |
+| --- | --- |
+| Pages 项目名称 | `visionsy-dashboard` |
+| 生产分支 | `main` |
+| 框架预设 | None |
+| 根目录 | 仓库根目录 |
+| 构建命令 | `npm run build` |
+| 构建输出目录 | `public` |
+| Node 版本 | `22`（`.node-version`） |
+| 生产自动部署 | 开启 |
+| 其他分支预览 | 关闭（避免无必要的预览站点） |
+
+Pages 自动安装 package-lock.json 中锁定的依赖。`npm run build` 只生成本地加密依赖的浏览器 bundle，
+不需要启动 server.mjs，不需要 Functions、Worker、数据库或 Cloudflare API token。
+`public/_headers` 提供静态站点的安全响应头，`404.html` 禁止不存在的接口自动回退到 SPA。
+所有功能路由继续使用 URL hash，无需重写规则。
+
+后续在 `main` 提交并推送后，由 Cloudflare 的 GitHub 集成自动构建和发布。Pages 与 GitHub 的授权需要允许访问此私有仓库。
+
+部署地址使用 HTTPS。连接 daemon 时也应使用 HTTPS，并把面板实际来源（如 `https://visionsy-dashboard.pages.dev`）
+加入 daemon 的 `MANAGEMENT_ALLOWED_ORIGINS`。该设置在 daemon 端，不能靠 Pages 响应头替代。
+现有 HTTP 局域网 daemon 仍可使用本地 HTTP 面板测试；云端 HTTPS 面板不会代理或绕过混合内容限制。
+Pages 上的账号和连接仍仅保存在访问者自己的浏览器，不会从本地面板自动同步。

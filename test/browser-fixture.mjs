@@ -1,5 +1,5 @@
 import { readFileSync } from 'node:fs';
-export const credentials = JSON.parse(readFileSync(process.env.VISIONSY_LAYOUT_CREDENTIALS || new URL('../../deploy/docker/.split-local/credentials.json',import.meta.url),'utf8'));
+export const credentials = JSON.parse(readFileSync(process.env.VISIONSY_LAYOUT_CREDENTIALS || new URL('../../VisionSY_Private/deploy/docker/.split-local/credentials.json',import.meta.url),'utf8'));
 export async function unlock(page, { connect = true } = {}) {
   await page.locator('#auth-form').waitFor();
   await page.locator('input[name=username]').fill(credentials.dashboard_username);
